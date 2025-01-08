@@ -1,0 +1,36 @@
+{
+  "name": "tripify",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "dev": "npx nodemon ./src/index.ts",
+    "migration:run": "npx ts-node ./src/db/migration/run.ts",
+    "migration:rollback": "npx ts-node ./src/db/migration/rollback.ts",
+    "migration:create": "npx ts-node ./src/db/migration/create.ts",
+    "db:seed": "npx ts-node ./src/seed/seed.ts",
+    "codegen": "npx kysely-codegen --out-file ./src/db/generated.ts",
+    "ts": "tsc --noEmit -p ./tsconfig.json"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5",
+    "express-zod-api": "^21.8.0",
+    "http-errors": "^2.0.0",
+    "kysely": "^0.27.5",
+    "pg": "^8.13.1",
+    "typescript": "^5.7.2",
+    "winston": "^3.17.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.3.0",
+    "@types/express": "^5",
+    "@types/http-errors": "^2.0.4",
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "kysely-codegen": "^0.17.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2"
+  }
+}

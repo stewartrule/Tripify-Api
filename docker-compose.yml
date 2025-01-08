@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17.2-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: tripify
+      POSTGRES_PASSWORD: tripify
+      POSTGRES_DB: tripify
+      POSTGRES_INITDB_ARGS: '--locale=nl_NL.UTF8'
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  db:
+    driver: local
