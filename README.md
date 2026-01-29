@@ -1,10 +1,17 @@
-# Tripify-Api
+# Tripify Api
 
 ```
-docker-compose up --build
+docker compose up --build
 
 yarn
+
 yarn migration:run
 yarn codegen
-yarn db:seed
+yarn seed:run
+
+yarn dev
+```
+
+```
+http://localhost:8090/v1/accommodations
 ```

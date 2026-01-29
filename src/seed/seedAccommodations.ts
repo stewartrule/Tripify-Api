@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import type { Selectable } from 'kysely';
-import { db } from '../db';
-import { Accommodation, Country } from '../db/generated';
-import { NewAccommodationPrice } from '../db/types';
-import { accommodationData } from './scraped/accommodationData';
+import { Accommodation, Country } from '../db/generated.js';
+import { db } from '../db/index.js';
+import { NewRoom, NewRoomPrice } from '../db/types.js';
+import { accommodationData } from './scraped/accommodationData.js';
 import {
   accomodationAccessibilityData,
   accomodationCertificationData,
@@ -11,8 +11,8 @@ import {
   accomodationTypeData,
   roomAccessibilityData,
   roomFacilityData,
-} from './scraped/filterData';
-import { leisureData } from './scraped/leisureData';
+} from './scraped/filterData.js';
+import { leisureData } from './scraped/leisureData.js';
 
 export async function seedAccommodations(
   countries: Selectable<Country>[]
@@ -122,7 +122,7 @@ export async function seedAccommodations(
   for (const country of countries) {
     const cities = allCities
       .filter((city) => city.country === country.name)
-      .slice(0, 25);
+      .slice(0, 10);
 
     const adjectives = ['Sunrise', 'Luxury', 'Southside', 'Boutique'];
     for (const city of cities) {
@@ -177,26 +177,63 @@ export async function seedAccommodations(
                 address_id: address.id,
                 description: pexel.alt,
                 distance_to_beach: distanceToBeach,
-                square_meters: faker.number.int({ min: 40, max: 120 }),
-                number_of_bathrooms: faker.number.int({ min: 1, max: 4 }),
-                number_of_bedrooms: faker.number.int({ min: 1, max: 4 }),
               })
               .returningAll()
               .executeTakeFirstOrThrow();
 
-            // Weekly prices.
+            // Handle floor/room-numbering.
+            let floors = [1];
+            let roomNumbers = [1, 2, 3];
+            let floorMultiplier = 1;
+            if (accomodationType.name === 'Hotel') {
+              floors = [1, 2, 3, 4];
+              roomNumbers = [1, 2, 3, 4];
+              floorMultiplier = 100;
+            } else if (accomodationType.name === 'Resort') {
+              floors = [1];
+              roomNumbers = [1, 2, 3, 4];
+            }
+
+            const roomValues = floors.flatMap((floor) =>
+              roomNumbers.map((num) => {
+                const room: NewRoom = {
+                  floor,
+                  number: (floor - 1) * floorMultiplier + num,
+                  square_meters: faker.number.int({ min: 40, max: 120 }),
+                  number_of_bathrooms: faker.number.int({ min: 1, max: 4 }),
+                  number_of_bedrooms: faker.number.int({ min: 1, max: 4 }),
+                };
+                return room;
+              })
+            );
+            const rooms = await db
+              .insertInto('room')
+              .values(roomValues)
+              .returningAll()
+              .execute();
+
+            db.insertInto('accommodation_room')
+              .values(
+                rooms.map((room) => ({
+                  accommodation_id: accommodation.id,
+                  room_id: room.id,
+                }))
+              )
+              .execute();
+
+            // Weekly room prices.
             const basePrice = faker.number.int({ min: 40, max: 120 }) * 100;
             const numWeeks = 52;
             const f = Math.PI / numWeeks;
-            const accommodationPriceValues = Array.from({
+            const roomPriceValues = Array.from({
               length: numWeeks,
-            }).map(
-              (_, i): NewAccommodationPrice => ({
-                accommodation_id: accommodation.id,
+            }).flatMap((_, i): NewRoomPrice[] =>
+              rooms.map((room) => ({
+                room_id: room.id,
                 price:
                   basePrice + Math.round(Math.sin(i * f) * (basePrice / 2)),
                 week: i + 1,
-              })
+              }))
             );
 
             const accommodationCertificationValues = random(
@@ -226,14 +263,12 @@ export async function seedAccommodations(
               accommodation_facility_id: row.id,
             }));
 
-            const roomAccessibilityValues = random(
-              roomAccessiblities,
-              1,
-              4
-            ).map((row) => ({
-              accommodation_id: accommodation.id,
-              room_accessibility_id: row.id,
-            }));
+            const roomAccessibilityValues = rooms.flatMap((room) =>
+              random(roomAccessiblities, 1, 4).map((row) => ({
+                room_id: room.id,
+                room_accessibility_id: row.id,
+              }))
+            );
 
             const leisureValues = random(leisure, 1, 3).map((row) => ({
               accommodation_id: accommodation.id,
@@ -249,10 +284,7 @@ export async function seedAccommodations(
                 })
                 .execute(),
 
-              db
-                .insertInto('accommodation_price')
-                .values(accommodationPriceValues)
-                .execute(),
+              db.insertInto('room_price').values(roomPriceValues).execute(),
 
               db
                 .insertInto('accommodation_accommodation_certification')
@@ -270,7 +302,7 @@ export async function seedAccommodations(
                 .execute(),
 
               db
-                .insertInto('accommodation_room_accessibility')
+                .insertInto('room_room_accessibility')
                 .values(roomAccessibilityValues)
                 .execute(),
 
@@ -281,51 +313,54 @@ export async function seedAccommodations(
 
               // Room facilities.
               db
-                .insertInto('accommodation_room_facility')
+                .insertInto('room_room_facility')
                 .values(
-                  commonFacilities.map((row) => ({
-                    accommodation_id: accommodation.id,
-                    room_facility_id: row.id,
-                  }))
+                  rooms.flatMap((room) =>
+                    commonFacilities.map((row) => ({
+                      room_id: room.id,
+                      room_facility_id: row.id,
+                    }))
+                  )
                 )
                 .execute(),
 
               db
-                .insertInto('accommodation_room_facility')
+                .insertInto('room_room_facility')
                 .values(
-                  random(maybeFacilities, 3, 5).map((row) => ({
-                    accommodation_id: accommodation.id,
-                    room_facility_id: row.id,
-                  }))
+                  rooms.flatMap((room) =>
+                    random(maybeFacilities, 3, 5).map((row) => ({
+                      room_id: room.id,
+                      room_facility_id: row.id,
+                    }))
+                  )
                 )
                 .execute(),
 
               db
-                .insertInto('accommodation_room_facility')
+                .insertInto('room_room_facility')
                 .values(
-                  random(luxuryFacilities, 1, 3).map((row) => ({
-                    accommodation_id: accommodation.id,
-                    room_facility_id: row.id,
-                  }))
+                  rooms.flatMap((room) =>
+                    random(luxuryFacilities, 1, 3).map((row) => ({
+                      room_id: room.id,
+                      room_facility_id: row.id,
+                    }))
+                  )
                 )
                 .execute(),
             ]);
 
-            if (accommodation.distance_to_beach <= 500) {
-              const facility = faker.helpers.arrayElement(beachFacilities);
-
+            const facility = faker.helpers.arrayElement(beachFacilities);
+            if (accommodation.distance_to_beach <= 500 && facility != null) {
               await db
-                .insertInto('accommodation_room_facility')
-                .values({
-                  accommodation_id: accommodation.id,
-                  room_facility_id: facility!.id,
-                })
+                .insertInto('room_room_facility')
+                .values(
+                  rooms.map((room) => ({
+                    room_id: room.id,
+                    room_facility_id: facility.id,
+                  }))
+                )
                 .execute();
             }
-
-            console.log(
-              `Added ${accomodationType.name} accommodations for ${city.name}`
-            );
 
             return accommodation;
           })
@@ -334,6 +369,8 @@ export async function seedAccommodations(
         accommodations = accommodations.concat(result);
       }
     }
+
+    console.log(`inserted accommodations for ${country.name}`);
   }
 
   return accommodations;

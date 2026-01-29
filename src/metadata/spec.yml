@@ -1,0 +1,1926 @@
+openapi: 3.1.0
+info:
+  title: Tripify
+  version: '1'
+paths:
+  /v1/me:
+    get:
+      operationId: GetV1Me
+      responses:
+        '200':
+          description: GET /v1/me Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      profile:
+                        type: object
+                        propertyNames:
+                          type: string
+                        additionalProperties: {}
+                      trips:
+                        type: array
+                        items:
+                          type: object
+                          propertyNames:
+                            type: string
+                          additionalProperties: {}
+                    required:
+                      - profile
+                      - trips
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/me Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Me
+      responses:
+        '200':
+          description: HEAD /v1/me Positive response
+        '400':
+          description: HEAD /v1/me Negative response
+  /v1/filters/accommodations:
+    get:
+      operationId: GetV1FiltersAccommodations
+      responses:
+        '200':
+          description: GET /v1/filters/accommodations Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      accommodation_certification:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      accommodation_accessibility:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      accommodation_facility:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      accommodation_type:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      room_accessibility:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      room_facility:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      leisure:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                      country:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            name:
+                              type: string
+                          required:
+                            - id
+                            - name
+                          additionalProperties: false
+                    required:
+                      - accommodation_certification
+                      - accommodation_accessibility
+                      - accommodation_facility
+                      - accommodation_type
+                      - room_accessibility
+                      - room_facility
+                      - leisure
+                      - country
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/filters/accommodations Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1FiltersAccommodations
+      responses:
+        '200':
+          description: HEAD /v1/filters/accommodations Positive response
+        '400':
+          description: HEAD /v1/filters/accommodations Negative response
+  /v1/countries:
+    get:
+      operationId: GetV1Countries
+      responses:
+        '200':
+          description: GET /v1/countries Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      countries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: -9007199254740991
+                              maximum: 9007199254740991
+                            code:
+                              type: string
+                            name:
+                              type: string
+                            native_name:
+                              type: string
+                          required:
+                            - id
+                            - code
+                            - name
+                            - native_name
+                          additionalProperties: false
+                    required:
+                      - countries
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/countries Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Countries
+      responses:
+        '200':
+          description: HEAD /v1/countries Positive response
+        '400':
+          description: HEAD /v1/countries Negative response
+  /v1/flights/{id}:
+    get:
+      operationId: GetV1FlightsId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: GET /v1/flights/:id Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: GET /v1/flights/:id Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      flight:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          airline_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          airplane_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          arrival_gate_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          arrival_planned_at:
+                            description: YYYY-MM-DDTHH:mm:ss.sssZ
+                            type: string
+                            format: date-time
+                            externalDocs:
+                              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                          arrived_at:
+                            description: YYYY-MM-DDTHH:mm:ss.sssZ
+                            type:
+                              - string
+                              - 'null'
+                            format: date-time
+                            externalDocs:
+                              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                          departed_at:
+                            description: YYYY-MM-DDTHH:mm:ss.sssZ
+                            type:
+                              - string
+                              - 'null'
+                            format: date-time
+                            externalDocs:
+                              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                          departure_gate_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          departure_planned_at:
+                            description: YYYY-MM-DDTHH:mm:ss.sssZ
+                            type: string
+                            format: date-time
+                            externalDocs:
+                              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                          airline:
+                            type: string
+                          airline_logo_src:
+                            type: string
+                          departure_country_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          arrival_country_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          departure_airport:
+                            type:
+                              - object
+                              - 'null'
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              name:
+                                type: string
+                              iata:
+                                type: string
+                              latitude:
+                                type: number
+                              longitude:
+                                type: number
+                              country:
+                                type:
+                                  - object
+                                  - 'null'
+                                properties:
+                                  id:
+                                    type: integer
+                                    minimum: 0
+                                    maximum: 4294967295
+                                  name:
+                                    type: string
+                                required:
+                                  - id
+                                  - name
+                                additionalProperties: false
+                            required:
+                              - id
+                              - name
+                              - iata
+                              - latitude
+                              - longitude
+                              - country
+                            additionalProperties: false
+                          arrival_airport:
+                            type:
+                              - object
+                              - 'null'
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              name:
+                                type: string
+                              iata:
+                                type: string
+                              latitude:
+                                type: number
+                              longitude:
+                                type: number
+                              country:
+                                type:
+                                  - object
+                                  - 'null'
+                                properties:
+                                  id:
+                                    type: integer
+                                    minimum: 0
+                                    maximum: 4294967295
+                                  name:
+                                    type: string
+                                required:
+                                  - id
+                                  - name
+                                additionalProperties: false
+                            required:
+                              - id
+                              - name
+                              - iata
+                              - latitude
+                              - longitude
+                              - country
+                            additionalProperties: false
+                        required:
+                          - id
+                          - airline_id
+                          - airplane_id
+                          - arrival_gate_id
+                          - arrival_planned_at
+                          - arrived_at
+                          - departed_at
+                          - departure_gate_id
+                          - departure_planned_at
+                          - airline
+                          - airline_logo_src
+                          - departure_country_id
+                          - arrival_country_id
+                          - departure_airport
+                          - arrival_airport
+                        additionalProperties: false
+                      seats:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            type:
+                              type: string
+                              enum:
+                                - business
+                                - economy
+                                - first
+                            row:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            seat:
+                              type: string
+                            passenger:
+                              type:
+                                - object
+                                - 'null'
+                              properties:
+                                id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 4294967295
+                                airplane_seat_id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 4294967295
+                                boarded_at:
+                                  description: YYYY-MM-DDTHH:mm:ss.sssZ
+                                  type:
+                                    - string
+                                    - 'null'
+                                  format: date-time
+                                  externalDocs:
+                                    url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                                checked_in_at:
+                                  description: YYYY-MM-DDTHH:mm:ss.sssZ
+                                  type:
+                                    - string
+                                    - 'null'
+                                  format: date-time
+                                  externalDocs:
+                                    url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                                flight_id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 4294967295
+                                person_id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 4294967295
+                                return_flight:
+                                  type: boolean
+                                trip_id:
+                                  type: integer
+                                  minimum: 0
+                                  maximum: 4294967295
+                              required:
+                                - id
+                                - airplane_seat_id
+                                - boarded_at
+                                - checked_in_at
+                                - flight_id
+                                - person_id
+                                - return_flight
+                                - trip_id
+                              additionalProperties: false
+                          required:
+                            - id
+                            - type
+                            - row
+                            - seat
+                            - passenger
+                          additionalProperties: false
+                    required:
+                      - flight
+                      - seats
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/flights/:id Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1FlightsId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: HEAD /v1/flights/:id Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: HEAD /v1/flights/:id Positive response
+        '400':
+          description: HEAD /v1/flights/:id Negative response
+  /v1/flights:
+    get:
+      operationId: GetV1Flights
+      parameters:
+        - name: departure_date
+          in: query
+          required: false
+          description: YYYY-MM-DDTHH:mm:ss.sssZ
+          schema:
+            description: YYYY-MM-DDTHH:mm:ss.sssZ
+            type: string
+            format: date-time
+            pattern: ^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?)?Z?$
+            externalDocs:
+              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+        - name: from_country_id
+          in: query
+          required: false
+          description: GET /v1/flights Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+        - name: to_country_id
+          in: query
+          required: false
+          description: GET /v1/flights Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+        - name: direction
+          in: query
+          required: false
+          description: GET /v1/flights Parameter
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: order_by
+          in: query
+          required: false
+          description: GET /v1/flights Parameter
+          schema:
+            type: string
+            enum:
+              - departure_planned_at
+              - airline
+        - name: limit
+          in: query
+          required: false
+          description: GET /v1/flights Parameter
+          schema:
+            type: string
+            maxLength: 3
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: GET /v1/flights Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      flights:
+                        type: array
+                        items:
+                          type: object
+                          propertyNames:
+                            type: string
+                          additionalProperties: {}
+                    required:
+                      - flights
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/flights Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Flights
+      parameters:
+        - name: departure_date
+          in: query
+          required: false
+          description: YYYY-MM-DDTHH:mm:ss.sssZ
+          schema:
+            description: YYYY-MM-DDTHH:mm:ss.sssZ
+            type: string
+            format: date-time
+            pattern: ^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?)?Z?$
+            externalDocs:
+              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+        - name: from_country_id
+          in: query
+          required: false
+          description: HEAD /v1/flights Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+        - name: to_country_id
+          in: query
+          required: false
+          description: HEAD /v1/flights Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+        - name: direction
+          in: query
+          required: false
+          description: HEAD /v1/flights Parameter
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: order_by
+          in: query
+          required: false
+          description: HEAD /v1/flights Parameter
+          schema:
+            type: string
+            enum:
+              - departure_planned_at
+              - airline
+        - name: limit
+          in: query
+          required: false
+          description: HEAD /v1/flights Parameter
+          schema:
+            type: string
+            maxLength: 3
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: HEAD /v1/flights Positive response
+        '400':
+          description: HEAD /v1/flights Negative response
+  /v1/events/{id}:
+    get:
+      operationId: GetV1EventsId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: GET /v1/events/:id Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: GET /v1/events/:id Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      event:
+                        type: object
+                        properties:
+                          country:
+                            type: string
+                          country_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          province:
+                            type: string
+                          province_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          city:
+                            type: string
+                          city_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          description:
+                            type: string
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          name:
+                            type: string
+                          price:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          from_date:
+                            description: YYYY-MM-DDTHH:mm:ss.sssZ
+                            type: string
+                            format: date-time
+                            externalDocs:
+                              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                          to_date:
+                            description: YYYY-MM-DDTHH:mm:ss.sssZ
+                            type: string
+                            format: date-time
+                            externalDocs:
+                              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                          leisure_id:
+                            type: integer
+                            minimum: 0
+                            maximum: 4294967295
+                          leisure:
+                            type: string
+                          image:
+                            type:
+                              - object
+                              - 'null'
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              name:
+                                type: string
+                              b:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              h:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              s:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              src:
+                                type: string
+                            required:
+                              - id
+                              - name
+                              - b
+                              - h
+                              - s
+                              - src
+                            additionalProperties: false
+                          address:
+                            type:
+                              - object
+                              - 'null'
+                            properties:
+                              id:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              city_id:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              house_number:
+                                type: integer
+                                minimum: 0
+                                maximum: 4294967295
+                              postal_code:
+                                type: string
+                              street:
+                                type: string
+                            required:
+                              - id
+                              - city_id
+                              - house_number
+                              - postal_code
+                              - street
+                            additionalProperties: false
+                        required:
+                          - country
+                          - country_id
+                          - province
+                          - province_id
+                          - city
+                          - city_id
+                          - description
+                          - id
+                          - name
+                          - price
+                          - from_date
+                          - to_date
+                          - leisure_id
+                          - leisure
+                        additionalProperties: false
+                    required:
+                      - event
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/events/:id Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1EventsId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: HEAD /v1/events/:id Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: HEAD /v1/events/:id Positive response
+        '400':
+          description: HEAD /v1/events/:id Negative response
+  /v1/events:
+    get:
+      operationId: GetV1Events
+      parameters:
+        - name: date
+          in: query
+          required: false
+          description: YYYY-MM-DDTHH:mm:ss.sssZ
+          schema:
+            description: YYYY-MM-DDTHH:mm:ss.sssZ
+            type: string
+            format: date-time
+            pattern: ^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?)?Z?$
+            externalDocs:
+              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+        - name: country_ids
+          in: query
+          required: false
+          description: GET /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: province_ids
+          in: query
+          required: false
+          description: GET /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: city_ids
+          in: query
+          required: false
+          description: GET /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: direction
+          in: query
+          required: false
+          description: GET /v1/events Parameter
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: order_by
+          in: query
+          required: false
+          description: GET /v1/events Parameter
+          schema:
+            type: string
+            enum:
+              - from_date
+              - price
+              - city
+        - name: limit
+          in: query
+          required: false
+          description: GET /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 3
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: GET /v1/events Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      events:
+                        type: array
+                        items:
+                          type: object
+                          propertyNames:
+                            type: string
+                          additionalProperties: {}
+                    required:
+                      - events
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/events Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Events
+      parameters:
+        - name: date
+          in: query
+          required: false
+          description: YYYY-MM-DDTHH:mm:ss.sssZ
+          schema:
+            description: YYYY-MM-DDTHH:mm:ss.sssZ
+            type: string
+            format: date-time
+            pattern: ^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?)?Z?$
+            externalDocs:
+              url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+        - name: country_ids
+          in: query
+          required: false
+          description: HEAD /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: province_ids
+          in: query
+          required: false
+          description: HEAD /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: city_ids
+          in: query
+          required: false
+          description: HEAD /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: direction
+          in: query
+          required: false
+          description: HEAD /v1/events Parameter
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: order_by
+          in: query
+          required: false
+          description: HEAD /v1/events Parameter
+          schema:
+            type: string
+            enum:
+              - from_date
+              - price
+              - city
+        - name: limit
+          in: query
+          required: false
+          description: HEAD /v1/events Parameter
+          schema:
+            type: string
+            maxLength: 3
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: HEAD /v1/events Positive response
+        '400':
+          description: HEAD /v1/events Negative response
+  /v1/accommodations/{id}:
+    get:
+      operationId: GetV1AccommodationsId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: GET /v1/accommodations/:id Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: GET /v1/accommodations/:id Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      accommodation:
+                        type: object
+                        propertyNames:
+                          type: string
+                        additionalProperties: {}
+                    required:
+                      - accommodation
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/accommodations/:id Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1AccommodationsId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: HEAD /v1/accommodations/:id Parameter
+          schema:
+            type: string
+            maxLength: 10
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: HEAD /v1/accommodations/:id Positive response
+        '400':
+          description: HEAD /v1/accommodations/:id Negative response
+  /v1/accommodations:
+    get:
+      operationId: GetV1Accommodations
+      parameters:
+        - name: country_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: province_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: city_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_certification_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_accessibility_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_facility_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_type_ids
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: max_distance_to_beach
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            pattern: ^\d{1,10}$
+        - name: keyword
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+        - name: direction
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: order_by
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            enum:
+              - distance_to_beach
+              - avg_accuracy_rating
+              - avg_cleanliness_rating
+              - avg_communication_rating
+              - avg_value_rating
+              - review_count
+        - name: limit
+          in: query
+          required: false
+          description: GET /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 3
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: GET /v1/accommodations Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                      accommodations:
+                        type: array
+                        items:
+                          type: object
+                          propertyNames:
+                            type: string
+                          additionalProperties: {}
+                    required:
+                      - count
+                      - accommodations
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/accommodations Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Accommodations
+      parameters:
+        - name: country_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: province_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: city_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_certification_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_accessibility_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_facility_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: accommodation_type_ids
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 1024
+            pattern: ^[0-9\.]+$
+        - name: max_distance_to_beach
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            pattern: ^\d{1,10}$
+        - name: keyword
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+        - name: direction
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: order_by
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            enum:
+              - distance_to_beach
+              - avg_accuracy_rating
+              - avg_cleanliness_rating
+              - avg_communication_rating
+              - avg_value_rating
+              - review_count
+        - name: limit
+          in: query
+          required: false
+          description: HEAD /v1/accommodations Parameter
+          schema:
+            type: string
+            maxLength: 3
+            pattern: ^[1-9]\d*$
+      responses:
+        '200':
+          description: HEAD /v1/accommodations Positive response
+        '400':
+          description: HEAD /v1/accommodations Negative response
+  /v1/locations:
+    get:
+      operationId: GetV1Locations
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          description: GET /v1/locations Parameter
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+      responses:
+        '200':
+          description: GET /v1/locations Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      cities:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            name:
+                              type: string
+                            province_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            province:
+                              type: string
+                            country_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            country:
+                              type: string
+                            score:
+                              type: number
+                          required:
+                            - id
+                            - name
+                            - province_id
+                            - province
+                            - country_id
+                            - country
+                            - score
+                          additionalProperties: false
+                      provinces:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            name:
+                              type: string
+                            country_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            country:
+                              type: string
+                            score:
+                              type: number
+                          required:
+                            - id
+                            - name
+                            - country_id
+                            - country
+                            - score
+                          additionalProperties: false
+                      countries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            name:
+                              type: string
+                            score:
+                              type: number
+                          required:
+                            - id
+                            - name
+                            - score
+                          additionalProperties: false
+                      accommodations:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            name:
+                              type: string
+                            city_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            city:
+                              type: string
+                            province_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            province:
+                              type: string
+                            country_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            country:
+                              type: string
+                            score:
+                              type: number
+                          required:
+                            - id
+                            - name
+                            - city_id
+                            - city
+                            - province_id
+                            - province
+                            - country_id
+                            - country
+                            - score
+                          additionalProperties: false
+                      airports:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            name:
+                              type: string
+                            country_id:
+                              type: integer
+                              minimum: 0
+                              maximum: 4294967295
+                            country:
+                              type: string
+                            score:
+                              type: number
+                          required:
+                            - id
+                            - name
+                            - country_id
+                            - country
+                            - score
+                          additionalProperties: false
+                    required:
+                      - cities
+                      - provinces
+                      - countries
+                      - accommodations
+                      - airports
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/locations Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Locations
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          description: HEAD /v1/locations Parameter
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+      responses:
+        '200':
+          description: HEAD /v1/locations Positive response
+        '400':
+          description: HEAD /v1/locations Negative response
+  /v1/airports:
+    get:
+      operationId: GetV1Airports
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          description: GET /v1/airports Parameter
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+      responses:
+        '200':
+          description: GET /v1/airports Positive response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: success
+                  data:
+                    type: object
+                    properties:
+                      airports:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              minimum: -9007199254740991
+                              maximum: 9007199254740991
+                            name:
+                              type: string
+                            iata:
+                              type: string
+                            is_iata:
+                              anyOf:
+                                - type: boolean
+                                - type: number
+                                  const: 0
+                                - type: number
+                                  const: 1
+                            score:
+                              type: number
+                            country:
+                              type: string
+                            country_id:
+                              type: integer
+                              minimum: -9007199254740991
+                              maximum: 9007199254740991
+                          required:
+                            - id
+                            - name
+                            - iata
+                            - is_iata
+                            - score
+                            - country
+                            - country_id
+                          additionalProperties: false
+                    required:
+                      - airports
+                    additionalProperties: false
+                required:
+                  - status
+                  - data
+                additionalProperties: false
+        '400':
+          description: GET /v1/airports Negative response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    const: error
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                    required:
+                      - message
+                    additionalProperties: false
+                required:
+                  - status
+                  - error
+                additionalProperties: false
+              examples:
+                example1:
+                  value:
+                    status: error
+                    error:
+                      message: Sample error message
+    head:
+      operationId: HeadV1Airports
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          description: HEAD /v1/airports Parameter
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+      responses:
+        '200':
+          description: HEAD /v1/airports Positive response
+        '400':
+          description: HEAD /v1/airports Negative response
+components:
+  schemas: {}
+  responses: {}
+  parameters: {}
+  examples: {}
+  requestBodies: {}
+  headers: {}
+  securitySchemes: {}
+  links: {}
+  callbacks: {}
+tags: []
+servers:
+  - url: https://tripify.io

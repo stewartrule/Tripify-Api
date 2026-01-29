@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { publicEndpointsFactory } from '../util/endpointsFactory';
+import { publicEndpointsFactory } from '../util/endpointsFactory.js';
 
 const filterOption = z.object({
   id: z.number(),
@@ -24,7 +24,7 @@ const input = z.object({});
 export const accommodationFiltersEndpoint = publicEndpointsFactory.build({
   input,
   output,
-  handler: async ({ options: { db } }) => {
+  handler: async ({ ctx: { db } }) => {
     const columns = ['id', 'name'] as const;
     const [
       accommodation_certification,
@@ -39,39 +39,39 @@ export const accommodationFiltersEndpoint = publicEndpointsFactory.build({
       db
         .selectFrom('accommodation_certification')
         .select(columns)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
       db
         .selectFrom('accommodation_accessibility')
         .select(columns)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
       db
         .selectFrom('accommodation_facility')
         .select(columns)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
       db
         .selectFrom('accommodation_type')
         .select(columns)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
       db
         .selectFrom('room_accessibility')
         .select(columns)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
       db
         .selectFrom('room_facility')
         .select(columns)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
-      db.selectFrom('leisure').select(columns).orderBy('name asc').execute(),
+      db.selectFrom('leisure').select(columns).orderBy('name', 'asc').execute(),
       db
         .selectFrom('country')
         .select(columns)
         .where('risk', '<', 2)
-        .orderBy('name asc')
+        .orderBy('name', 'asc')
         .execute(),
     ]);
 

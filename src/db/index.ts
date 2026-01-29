@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
-import { env } from '../env';
-import type { DB } from './generated';
+import { env } from '../env.js';
+import type { DB } from './generated.js';
 
 export const pool = new Pool({
   connectionString: env.DATABASE_URL,

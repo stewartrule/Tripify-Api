@@ -1,8 +1,8 @@
 import { Kysely } from 'kysely';
-import type { DB } from './generated';
+import type { DB } from './generated.js';
 
 export async function pivot(
-  db: Kysely<any>,
+  db: Kysely<DB>,
   // leftTable: string,
   // rightTable: string
   leftTable: keyof DB,

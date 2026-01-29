@@ -1,27 +1,32 @@
 import { Routing, ServeStatic } from 'express-zod-api';
 import * as path from 'path';
-import { accommodationEndpoint } from './endpoint/accommodation';
-import { accommodationFiltersEndpoint } from './endpoint/accommodationFilters';
-import { accommodationsEndpoint } from './endpoint/accommodations';
-import { countriesEndpoint } from './endpoint/countries';
-import { eventEndpoint } from './endpoint/event';
-import { eventsEndpoint } from './endpoint/events';
-import { flightsEndpoint } from './endpoint/flights';
-import { locationsEndpoint } from './endpoint/locations';
-import { airportsEndpoint } from './endpoint/airports';
+import { accommodationEndpoint } from './endpoint/accommodation.js';
+import { accommodationFiltersEndpoint } from './endpoint/accommodationFilters.js';
+import { accommodationsEndpoint } from './endpoint/accommodations.js';
+import { airportsEndpoint } from './endpoint/airports.js';
+import { countriesEndpoint } from './endpoint/countries.js';
+import { eventEndpoint } from './endpoint/event.js';
+import { eventsEndpoint } from './endpoint/events.js';
+import { flightEndpoint } from './endpoint/flight.js';
+import { flightsEndpoint } from './endpoint/flights.js';
+import { locationsEndpoint } from './endpoint/locations.js';
+import { meEndpoint } from './endpoint/me.js';
 
 export const routing: Routing = {
-  images: new ServeStatic(path.join(__dirname, 'images'), {
+  images: new ServeStatic(path.join(import.meta.dirname, 'images'), {
     dotfiles: 'deny',
     index: false,
     redirect: false,
   }),
   v1: {
+    me: meEndpoint,
     filters: {
       accommodations: accommodationFiltersEndpoint,
     },
     countries: countriesEndpoint,
-    flights: flightsEndpoint,
+    flights: flightsEndpoint.nest({
+      ':id': flightEndpoint,
+    }),
     events: eventsEndpoint.nest({
       ':id': eventEndpoint,
     }),

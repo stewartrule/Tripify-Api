@@ -1,41 +1,76 @@
+import createHttpError from 'http-errors';
+import { jsonObjectFrom } from 'kysely/helpers/postgres';
 import { z } from 'zod';
 import { publicEndpointsFactory } from '../util/endpointsFactory.js';
-import { ez } from 'express-zod-api';
-import { jsonObjectFrom } from 'kysely/helpers/postgres';
-import { getDistanceFromLatLonInKm } from '../util/getDistanceFromLatLonInKm.js';
 import { v } from '../util/validator.js';
+import { ez } from 'express-zod-api';
 
-const flight = z.record(z.string(), z.any());
+const uint = z.uint32();
+
+const passenger = z.object({
+  id: uint,
+  airplane_seat_id: uint,
+  boarded_at: ez.dateOut().nullable(),
+  checked_in_at: ez.dateOut().nullable(),
+  flight_id: uint,
+  person_id: uint,
+  return_flight: z.boolean(),
+  trip_id: uint,
+});
+
+const seat = z.object({
+  id: uint,
+  type: z.enum(['business', 'economy', 'first']),
+  row: uint,
+  seat: z.string(),
+  passenger: passenger.nullable(),
+});
+
+const country = z.object({
+  id: uint,
+  name: z.string(),
+});
+
+const airport = z.object({
+  id: uint,
+  name: z.string(),
+  iata: z.string(),
+  latitude: z.number(),
+  longitude: z.number(),
+  country: country.nullable(),
+});
+
+const flight = z.object({
+  id: uint,
+  airline_id: uint,
+  airplane_id: uint,
+  arrival_gate_id: uint,
+  arrival_planned_at: ez.dateOut(),
+  arrived_at: ez.dateOut().nullable(),
+  departed_at: ez.dateOut().nullable(),
+  departure_gate_id: uint,
+  departure_planned_at: ez.dateOut(),
+  airline: z.string(),
+  airline_logo_src: z.string(),
+  departure_country_id: uint,
+  arrival_country_id: uint,
+  departure_airport: airport.nullable(),
+  arrival_airport: airport.nullable(),
+});
 
 const output = z.object({
-  flights: flight.array(),
+  flight,
+  seats: seat.array(),
 });
 
 const input = z.object({
-  departure_date: ez.dateIn().optional(),
-  from_country_id: v.id().optional(),
-  to_country_id: v.id().optional(),
-  direction: z.enum(['asc', 'desc']).optional(),
-  order_by: z.enum(['departure_planned_at', 'airline']).optional(),
-  limit: v.limit(),
+  id: v.id(),
 });
 
-type Output = z.infer<typeof output>;
-
-export const flightsEndpoint = publicEndpointsFactory.build({
+export const flightEndpoint = publicEndpointsFactory.build({
   input,
   output,
-  handler: async ({
-    input: {
-      departure_date = new Date(),
-      from_country_id,
-      to_country_id,
-      direction = 'asc',
-      order_by = 'departure_planned_at',
-      limit = 80,
-    },
-    ctx: { db },
-  }): Promise<Output> => {
+  handler: async ({ input: { id }, ctx: { db } }) => {
     let query = db
       .selectFrom('flight')
       .innerJoin('airline', 'flight.airline_id', 'airline.id')
@@ -52,7 +87,7 @@ export const flightsEndpoint = publicEndpointsFactory.build({
       .innerJoin(
         'airport as departure_airport',
         'departure_airport.id',
-        'departure_gate.airport_id'
+        'arrival_gate.airport_id'
       )
       .innerJoin(
         'airport as arrival_airport',
@@ -81,20 +116,7 @@ export const flightsEndpoint = publicEndpointsFactory.build({
 
         'arrival_airport.country_id as arrival_country_id',
 
-        // Departure gate
-        jsonObjectFrom(
-          eb
-            .selectFrom('gate')
-            .select([
-              'gate.id',
-              'gate.airport_id',
-              'gate.terminal',
-              'gate.gate',
-            ])
-            .whereRef('gate.id', '=', 'flight.departure_gate_id')
-        ).as('departure_gate'),
-
-        // Departure airport.
+        // Departure.
         jsonObjectFrom(
           eb
             .selectFrom('airport')
@@ -113,19 +135,6 @@ export const flightsEndpoint = publicEndpointsFactory.build({
             ])
             .whereRef('airport.id', '=', 'departure_gate.airport_id')
         ).as('departure_airport'),
-
-        // Arrival gate
-        jsonObjectFrom(
-          eb
-            .selectFrom('gate')
-            .select([
-              'gate.id',
-              'gate.airport_id',
-              'gate.terminal',
-              'gate.gate',
-            ])
-            .whereRef('gate.id', '=', 'flight.arrival_gate_id')
-        ).as('arrival_gate'),
 
         // Arrival.
         jsonObjectFrom(
@@ -147,33 +156,39 @@ export const flightsEndpoint = publicEndpointsFactory.build({
             .whereRef('airport.id', '=', 'arrival_gate.airport_id')
         ).as('arrival_airport'),
       ])
-      .where('flight.departure_planned_at', '>=', departure_date)
-      .orderBy(order_by, direction)
-      .limit(limit);
+      .where('flight.id', '=', id)
+      .limit(1);
 
-    if (from_country_id != null) {
-      query = query.where('departure_airport.country_id', '=', from_country_id);
+    const flight = await query.executeTakeFirst();
+    if (!flight) {
+      throw createHttpError(404);
     }
 
-    if (to_country_id != null) {
-      query = query.where('arrival_airport.country_id', '=', to_country_id);
-    }
+    const passengers = await db
+      .selectFrom('passenger')
+      .selectAll()
+      .where('passenger.flight_id', '=', flight.id)
+      .execute();
 
-    const flights = await query.execute();
+    const rows = await db
+      .selectFrom('airplane_seat')
+      .select(['id', 'row', 'seat', 'type'])
+      .where('airplane_seat.airplane_id', '=', flight.airplane_id)
+      .orderBy('airplane_seat.row', 'asc')
+      .orderBy('airplane_seat.seat', 'asc')
+      .execute();
+
+    const seats = rows.map((seat) => ({
+      ...seat,
+      passenger:
+        passengers.find(
+          (passenger) => passenger.airplane_seat_id === seat.id
+        ) || null,
+    }));
 
     return {
-      flights: flights.map((flight) => {
-        const distance = getDistanceFromLatLonInKm(
-          flight.departure_airport?.latitude || 0,
-          flight.departure_airport?.longitude || 0,
-          flight.arrival_airport?.latitude || 0,
-          flight.arrival_airport?.longitude || 0
-        );
-        return {
-          ...flight,
-          distance: Math.round(distance),
-        };
-      }),
+      flight,
+      seats,
     };
   },
 });

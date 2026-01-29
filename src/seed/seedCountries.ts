@@ -1,7 +1,7 @@
-import { db } from '../db';
-import { countryData } from './scraped/countryData';
-import { locales } from './scraped/locales';
-import { travelRisk } from '../util/travelRisk';
+import { db } from '../db/index.js';
+import { countryData } from './scraped/countryData.js';
+import { locales } from './scraped/locales.js';
+import { travelRisk } from '../util/travelRisk.js';
 
 const moderate = ['Italy'];
 const medium = ['Russia', 'Colombia', 'Thailand'];

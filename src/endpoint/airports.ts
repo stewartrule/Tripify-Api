@@ -1,16 +1,16 @@
 import { sql } from 'kysely';
 import { z } from 'zod';
-import { publicEndpointsFactory } from '../util/endpointsFactory';
-import { v } from '../util/validator';
+import { publicEndpointsFactory } from '../util/endpointsFactory.js';
+import { v } from '../util/validator.js';
 
 const airport = z.object({
-  id: z.number(),
+  id: z.int(),
   name: z.string(),
   iata: z.string(),
   is_iata: v.sqlBool(),
   score: z.number(),
   country: z.string(),
-  country_id: z.number(),
+  country_id: z.int(),
 });
 
 const output = z.object({
@@ -24,7 +24,7 @@ const input = z.object({
 export const airportsEndpoint = publicEndpointsFactory.build({
   input,
   output,
-  handler: async ({ input: { keyword = '' }, options: { db } }) => {
+  handler: async ({ input: { keyword = '' }, ctx: { db } }) => {
     if (keyword.length === 0) {
       return {
         airports: [],
@@ -47,7 +47,8 @@ export const airportsEndpoint = publicEndpointsFactory.build({
           'country.name'
         )}, ${keyword}))`.as('score'),
       ])
-      .orderBy(['is_iata desc', 'score desc'])
+      .orderBy('is_iata', 'desc')
+      .orderBy('score', 'desc')
       .limit(20)
       .execute();
 

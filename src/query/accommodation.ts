@@ -1,6 +1,6 @@
 import { ExpressionBuilder } from 'kysely';
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
-import { DB } from '../db/generated';
+import { DB } from '../db/generated.js';
 
 type EB = ExpressionBuilder<DB, 'accommodation'>;
 
@@ -92,51 +92,6 @@ export function withAccommodationFacilities(eb: EB) {
   );
 }
 
-export function withRoomAccessibilities(eb: EB) {
-  return jsonArrayFrom(
-    eb
-      .selectFrom('room_accessibility')
-      .select(['room_accessibility.id', 'room_accessibility.name'])
-      .innerJoin(
-        'accommodation_room_accessibility',
-        'accommodation_room_accessibility.accommodation_id',
-        'accommodation.id'
-      )
-      .whereRef(
-        'room_accessibility.id',
-        '=',
-        'accommodation_room_accessibility.room_accessibility_id'
-      )
-  );
-}
-
-export function withRoomFacilities(eb: EB) {
-  return jsonArrayFrom(
-    eb
-      .selectFrom('room_facility')
-      .select(['room_facility.id', 'room_facility.name'])
-      .innerJoin(
-        'accommodation_room_facility',
-        'accommodation_room_facility.accommodation_id',
-        'accommodation.id'
-      )
-      .whereRef(
-        'room_facility.id',
-        '=',
-        'accommodation_room_facility.room_facility_id'
-      )
-  );
-}
-
-export function withAccommodationPrices(eb: EB) {
-  return jsonArrayFrom(
-    eb
-      .selectFrom('accommodation_price')
-      .select(['accommodation_price.price', 'accommodation_price.week'])
-      .whereRef('accommodation_price.accommodation_id', '=', 'accommodation.id')
-  );
-}
-
 export function withAccommodationAddress(eb: EB) {
   return jsonObjectFrom(
     eb
@@ -162,7 +117,8 @@ export function withAccommodationReviews(eb: EB) {
     eb
       .selectFrom('accommodation_review')
       .innerJoin('profile', 'accommodation_review.profile_id', 'profile.id')
-      .innerJoin('address', 'profile.address_id', 'address.id')
+      .innerJoin('person', 'person.id', 'profile.person_id')
+      .innerJoin('address', 'person.address_id', 'address.id')
       .innerJoin('city', 'address.city_id', 'city.id')
       .innerJoin('province', 'city.province_id', 'province.id')
       .innerJoin('country', 'province.country_id', 'country.id')
@@ -175,7 +131,7 @@ export function withAccommodationReviews(eb: EB) {
         'accommodation_review.value_rating',
         'accommodation_review.review',
         'accommodation_review.profile_id',
-        'profile.first_name',
+        'person.first_name',
         'country.name as country',
         'country.id as country_id',
         jsonObjectFrom(

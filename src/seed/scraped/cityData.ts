@@ -1,11 +1,12 @@
-import { cityDataAB } from './cityDataAB';
-import { cityDataCDEF } from './cityDataCDEF';
-import { cityDataGHIJK } from './cityDataGHIJK';
-import { cityDataLMNO } from './cityDataLMNO';
-import { cityDataPQRS } from './cityDataPQRS';
-import { cityDataTUVWYZ } from './cityDataTUVWYZ';
+import { cityDataAB } from './cityDataAB.js';
+import { cityDataCDEF } from './cityDataCDEF.js';
+import { cityDataGHIJK } from './cityDataGHIJK.js';
+import { cityDataLMNO } from './cityDataLMNO.js';
+import { cityDataPQRS } from './cityDataPQRS.js';
+import { cityDataTUVWYZ } from './cityDataTUVWYZ.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
 export type Data = {
   city: string;
@@ -40,6 +41,9 @@ export const cityData: Data2[] = cityDataAB
   .concat(cityDataPQRS)
   .concat(cityDataTUVWYZ)
   .filter((data): data is Data2 => typeof data.coordinates === 'object');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 fs.writeFile(
   path.join(__dirname, 'cities.json'),

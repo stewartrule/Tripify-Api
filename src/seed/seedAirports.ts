@@ -1,8 +1,8 @@
 import type { Selectable } from 'kysely';
-import { db } from '../db';
-import { Country } from '../db/generated';
-import { NewAirport } from '../db/types';
-import { airportData } from './scraped/airportData';
+import { db } from '../db/index.js';
+import { Country } from '../db/generated.js';
+import { NewAirport } from '../db/types.js';
+import { airportData } from './scraped/airportData.js';
 
 export async function seedAirports(
   countries: Selectable<Country>[]

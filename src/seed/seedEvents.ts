@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker';
 import type { Selectable } from 'kysely';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
-import { db } from '../db';
-import { City } from '../db/generated';
-import { NewEvent } from '../db/types';
+import { db } from '../db/index.js';
+import { City } from '../db/generated.js';
+import { NewEvent } from '../db/types.js';
+import { toSqlUtc } from '../util/date.js';
 
 export async function seedEvents(
   cities: Selectable<City>[]
@@ -51,13 +52,13 @@ export async function seedEvents(
 
       return {
         name: `${row.name} ${city.name}`,
-        price: faker.number.int({ min: 10, max: 80 }) * 100 + 99,
+        price: faker.number.int({ min: 2, max: 20 }) * 500 + 99,
         description: faker.lorem.sentences(5),
         address_id: address.id,
         leisure_id: row.id,
         image_id: imageId,
-        from_date: from,
-        to_date: to,
+        from_date: toSqlUtc(from),
+        to_date: toSqlUtc(to),
       };
     });
 

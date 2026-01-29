@@ -7,15 +7,12 @@ import {
   withAccommodationFacilities,
   withAccommodationImages,
   withAccommodationLeisures,
-  withAccommodationPrices,
   withAccommodationReviews,
-  withRoomAccessibilities,
-  withRoomFacilities,
-} from '../query/accommodation';
-import { publicEndpointsFactory } from '../util/endpointsFactory';
-import { v } from '../util/validator';
+} from '../query/accommodation.js';
+import { publicEndpointsFactory } from '../util/endpointsFactory.js';
+import { v } from '../util/validator.js';
 
-const accommodation = z.record(z.any());
+const accommodation = z.record(z.string(), z.any());
 
 const output = z.object({
   accommodation,
@@ -28,7 +25,7 @@ const input = z.object({
 export const accommodationEndpoint = publicEndpointsFactory.build({
   input,
   output,
-  handler: async ({ input: { id }, options: { db } }) => {
+  handler: async ({ input: { id }, ctx: { db } }) => {
     const accommodation = await db
       .selectFrom('accommodation')
       .innerJoin('address', 'address.id', 'accommodation.address_id')
@@ -59,15 +56,12 @@ export const accommodationEndpoint = publicEndpointsFactory.build({
         withAccommodationAddress(eb).as('accommodation_address'),
         withAccommodationCertifications(eb).as('accommodation_certifications'),
         withAccommodationLeisures(eb).as('accommodation_leisures'),
-        withAccommodationPrices(eb).as('accommodation_prices'),
         withAccommodationReviews(eb).as('accommodation_reviews'),
         withAccommodationImages(eb).as('accommodation_images'),
         withAccommodationAccessibilities(eb).as(
           'accommodation_accessibilities'
         ),
         withAccommodationFacilities(eb).as('accommodation_facilities'),
-        withRoomAccessibilities(eb).as('room_accessibilities'),
-        withRoomFacilities(eb).as('room_facilities'),
       ])
       .where('accommodation.id', '=', id)
       .limit(1)

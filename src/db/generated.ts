@@ -5,11 +5,17 @@
 
 import type { ColumnType } from "kysely";
 
+export type AirplaneSeatType = "business" | "economy" | "first";
+
+export type Gender = "f" | "m" | "x";
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export type TripType = "one_way" | "round_trip";
 
 export interface Accommodation {
   accommodation_type_id: number;
@@ -18,9 +24,6 @@ export interface Accommodation {
   distance_to_beach: Generated<number>;
   id: Generated<number>;
   name: string;
-  number_of_bathrooms: number;
-  number_of_bedrooms: number;
-  square_meters: number;
 }
 
 export interface AccommodationAccessibility {
@@ -68,13 +71,6 @@ export interface AccommodationLeisure {
   leisure_id: number;
 }
 
-export interface AccommodationPrice {
-  accommodation_id: number;
-  id: Generated<number>;
-  price: number;
-  week: number;
-}
-
 export interface AccommodationReview {
   accommodation_id: number;
   accuracy_rating: number;
@@ -87,16 +83,10 @@ export interface AccommodationReview {
   value_rating: number;
 }
 
-export interface AccommodationRoomAccessibility {
+export interface AccommodationRoom {
   accommodation_id: number;
   id: Generated<number>;
-  room_accessibility_id: number;
-}
-
-export interface AccommodationRoomFacility {
-  accommodation_id: number;
-  id: Generated<number>;
-  room_facility_id: number;
+  room_id: number;
 }
 
 export interface AccommodationType {
@@ -120,8 +110,21 @@ export interface Airline {
 }
 
 export interface Airplane {
+  has_entertainment: Generated<boolean>;
+  has_usb: Generated<boolean>;
+  has_wifi: Generated<boolean>;
   id: Generated<number>;
   name: string;
+}
+
+export interface AirplaneSeat {
+  airplane_id: number;
+  bulkhead: Generated<boolean | null>;
+  exit_row: Generated<boolean | null>;
+  id: Generated<number>;
+  row: number;
+  seat: string;
+  type: AirplaneSeatType;
 }
 
 export interface Airport {
@@ -161,34 +164,42 @@ export interface CountryImage {
 export interface Event {
   address_id: number;
   description: string;
-  from_date: Generated<Timestamp>;
+  from_date: Timestamp;
   id: Generated<number>;
   image_id: number;
   leisure_id: number;
   name: string;
   price: number;
-  to_date: Generated<Timestamp>;
+  to_date: Timestamp;
 }
 
 export interface Flight {
   airline_id: number;
   airplane_id: number;
-  arrival_airport_id: number;
-  arrival_at: Timestamp | null;
-  arrival_gate: string;
-  departure_airport_id: number;
-  departure_at: Timestamp | null;
-  departure_gate: string;
+  arrival_gate_id: number;
+  arrival_planned_at: Timestamp;
+  arrived_at: Timestamp | null;
+  cancelled_at: Timestamp | null;
+  departed_at: Timestamp | null;
+  departure_gate_id: number;
+  departure_planned_at: Timestamp;
+  free_meals: Generated<number | null>;
   id: Generated<number>;
-  planned_arrival_at: Timestamp;
-  planned_departure_at: Timestamp;
+}
+
+export interface Gate {
+  airport_id: number;
+  gate: number;
+  id: Generated<number>;
+  terminal: string;
 }
 
 export interface Guest {
-  date_of_birth: Timestamp | null;
-  first_name: string;
+  accommodation_id: number;
+  from_date: Timestamp;
   id: Generated<number>;
-  last_name: string;
+  person_id: number;
+  to_date: Timestamp;
 }
 
 export interface Image {
@@ -217,26 +228,65 @@ export interface Locale {
 }
 
 export interface Passenger {
+  airplane_seat_id: number;
+  boarded_at: Timestamp | null;
+  checked_in_at: Timestamp | null;
+  flight_id: number;
+  id: Generated<number>;
+  person_id: number;
+  return_flight: Generated<boolean>;
+  trip_id: number;
+}
+
+export interface Payment {
+  amount: number;
+  id: Generated<number>;
+  merchant_id: string;
+  payed_at: Timestamp;
+  payment_method_id: number;
+  profile_id: number;
+  transaction_id: string;
+}
+
+export interface PaymentMethod {
+  id: Generated<number>;
+  name: string;
+}
+
+export interface Person {
+  address_id: number;
+  created_at: Generated<Timestamp>;
   date_of_birth: Timestamp | null;
+  email: string;
   first_name: string;
+  gender: Gender;
   id: Generated<number>;
   last_name: string;
+  telephone: string | null;
 }
 
 export interface Profile {
-  address_id: number;
-  date_of_birth: Timestamp | null;
-  first_name: string;
+  created_at: Generated<Timestamp>;
+  email: string;
   id: Generated<number>;
   image_id: number;
-  last_name: string;
-  telephone: string | null;
+  password: string;
+  person_id: number;
 }
 
 export interface Province {
   country_id: number;
   id: Generated<number>;
   name: string;
+}
+
+export interface Room {
+  floor: Generated<number | null>;
+  id: Generated<number>;
+  number: number;
+  number_of_bathrooms: number;
+  number_of_bedrooms: number;
+  square_meters: number;
 }
 
 export interface RoomAccessibility {
@@ -249,6 +299,33 @@ export interface RoomFacility {
   name: string;
 }
 
+export interface RoomPrice {
+  id: Generated<number>;
+  price: number;
+  room_id: number;
+  week: number;
+}
+
+export interface RoomRoomAccessibility {
+  id: Generated<number>;
+  room_accessibility_id: number;
+  room_id: number;
+}
+
+export interface RoomRoomFacility {
+  id: Generated<number>;
+  room_facility_id: number;
+  room_id: number;
+}
+
+export interface Trip {
+  booked_at: Timestamp;
+  id: Generated<number>;
+  payment_id: number;
+  profile_id: number;
+  type: TripType;
+}
+
 export interface DB {
   accommodation: Accommodation;
   accommodation_accessibility: AccommodationAccessibility;
@@ -259,28 +336,36 @@ export interface DB {
   accommodation_facility: AccommodationFacility;
   accommodation_image: AccommodationImage;
   accommodation_leisure: AccommodationLeisure;
-  accommodation_price: AccommodationPrice;
   accommodation_review: AccommodationReview;
-  accommodation_room_accessibility: AccommodationRoomAccessibility;
-  accommodation_room_facility: AccommodationRoomFacility;
+  accommodation_room: AccommodationRoom;
   accommodation_type: AccommodationType;
   address: Address;
   airline: Airline;
   airplane: Airplane;
+  airplane_seat: AirplaneSeat;
   airport: Airport;
   city: City;
   country: Country;
   country_image: CountryImage;
   event: Event;
   flight: Flight;
+  gate: Gate;
   guest: Guest;
   image: Image;
   leisure: Leisure;
   leisure_image: LeisureImage;
   locale: Locale;
   passenger: Passenger;
+  payment: Payment;
+  payment_method: PaymentMethod;
+  person: Person;
   profile: Profile;
   province: Province;
+  room: Room;
   room_accessibility: RoomAccessibility;
   room_facility: RoomFacility;
+  room_price: RoomPrice;
+  room_room_accessibility: RoomRoomAccessibility;
+  room_room_facility: RoomRoomFacility;
+  trip: Trip;
 }

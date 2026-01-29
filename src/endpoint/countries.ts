@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { publicEndpointsFactory } from '../util/endpointsFactory';
-import { travelRisk } from '../util/travelRisk';
+import { publicEndpointsFactory } from '../util/endpointsFactory.js';
+import { travelRisk } from '../util/travelRisk.js';
 
 const country = z.object({
-  id: z.number(),
+  id: z.int(),
   code: z.string(),
   name: z.string(),
   native_name: z.string(),
@@ -18,7 +18,7 @@ const input = z.object({});
 export const countriesEndpoint = publicEndpointsFactory.build({
   input,
   output,
-  handler: async ({ options: { db } }) => {
+  handler: async ({ ctx: { db } }) => {
     const countries = await db
       .selectFrom('country')
       .select([

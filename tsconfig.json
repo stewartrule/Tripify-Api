@@ -5,10 +5,16 @@
     "skipLibCheck": true,
     "lib": ["ES2023"],
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "allowUnreachableCode": false,
+    "noImplicitReturns": true
+  },
+  "ts-node": {
+    "transpileOnly": true
   }
 }

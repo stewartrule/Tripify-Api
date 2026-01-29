@@ -1,5 +1,5 @@
 import { createConfig } from 'express-zod-api';
-import { logger } from './logger';
+import { logger } from './logger.js';
 
 export const config = createConfig({
   http: {
@@ -7,4 +7,5 @@ export const config = createConfig({
   },
   cors: true,
   logger,
+  startupLogo: false,
 });

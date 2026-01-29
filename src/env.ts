@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const schema = z.object({
-  DATABASE_URL: z.string().startsWith('postgres').url(),
+  DATABASE_URL: z.url().startsWith('postgres'),
 });
 
 export const env = schema.parse({

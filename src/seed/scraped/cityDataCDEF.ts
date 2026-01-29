@@ -1,4 +1,4 @@
-import { type Data } from './cityData';
+import { type Data } from './cityData.js';
 
 export const cityDataCDEF: Data[] = [
   {

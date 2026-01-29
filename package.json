@@ -2,35 +2,44 @@
   "name": "tripify",
   "version": "1.0.0",
   "main": "src/index.ts",
+  "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "npx nodemon ./src/index.ts",
-    "migration:run": "npx ts-node ./src/db/migration/run.ts",
-    "migration:rollback": "npx ts-node ./src/db/migration/rollback.ts",
-    "migration:create": "npx ts-node ./src/db/migration/create.ts",
-    "db:seed": "npx ts-node ./src/seed/seed.ts",
+    "dev": "node --loader ts-node/esm --watch ./src/index.ts",
+    "migration:run": "node --loader ts-node/esm ./src/db/migration/run.ts",
+    "migration:rollback": "node --loader ts-node/esm ./src/db/migration/rollback.ts",
+    "migration:create": "node --loader ts-node/esm ./src/db/migration/create.ts",
+    "metadata:generate": "node --loader ts-node/esm ./src/metadata.ts",
+    "seed:run": "node --loader ts-node/esm ./src/seed/seed.ts",
     "codegen": "npx kysely-codegen --out-file ./src/db/generated.ts",
     "ts": "tsc --noEmit -p ./tsconfig.json"
   },
   "dependencies": {
-    "dotenv": "^16.4.7",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
     "express": "^5",
-    "express-zod-api": "^21.8.0",
+    "express-zod-api": "^26.3.1",
     "http-errors": "^2.0.0",
-    "kysely": "^0.27.5",
-    "pg": "^8.13.1",
-    "typescript": "^5.7.2",
+    "kysely": "^0.28.7",
+    "pg": "^8.16.3",
+    "typescript": "^5.9.3",
     "winston": "^3.17.0",
-    "zod": "^3.24.1"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.3.0",
-    "@types/express": "^5",
+    "@faker-js/faker": "^10.2.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.3",
     "@types/http-errors": "^2.0.4",
-    "@types/node": "^22.10.2",
-    "@types/pg": "^8.11.10",
-    "kysely-codegen": "^0.17.0",
-    "nodemon": "^3.1.9",
+    "@types/node": "^24.7.2",
+    "@types/pg": "^8.16.0",
+    "kysely-codegen": "^0.19.0",
     "ts-node": "^10.9.2"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true
   }
 }

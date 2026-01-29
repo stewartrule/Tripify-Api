@@ -1,14 +1,14 @@
 import { promises as fs } from 'fs';
 import { FileMigrationProvider, MigrationResult, Migrator } from 'kysely';
 import * as path from 'path';
-import { db } from '../index';
+import { db } from '../index.js';
 
 export const migrator = new Migrator({
   db,
   provider: new FileMigrationProvider({
     fs,
     path,
-    migrationFolder: path.join(__dirname, '../../migration'),
+    migrationFolder: path.join(import.meta.dirname, '../../migration'),
   }),
 });
 
@@ -48,6 +48,8 @@ function logResults(results: MigrationResult[]) {
       );
     } else if (it.status === 'Error') {
       console.error(`failed to migrate ${it.direction} "${it.migrationName}"`);
+    } else {
+      console.error(`"${it.migrationName}" was not executed`);
     }
   });
 }

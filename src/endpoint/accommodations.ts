@@ -1,16 +1,15 @@
 import { z } from 'zod';
 import {
   withAccommodationAccessibilities,
+  withAccommodationCertifications,
   withAccommodationFacilities,
   withAccommodationImages,
-  withRoomAccessibilities,
-  withRoomFacilities,
-  withAccommodationCertifications,
-} from '../query/accommodation';
-import { publicEndpointsFactory } from '../util/endpointsFactory';
-import { v } from '../util/validator';
+} from '../query/accommodation.js';
+// import { withRoomAccessibilities, withRoomFacilities } from '../query/room';
+import { publicEndpointsFactory } from '../util/endpointsFactory.js';
+import { v } from '../util/validator.js';
 
-const accommodation = z.record(z.any());
+const accommodation = z.record(z.string(), z.any());
 
 const ids = v.ids();
 
@@ -25,8 +24,6 @@ const input = z.object({
   accommodation_accessibility_ids: ids.optional(),
   accommodation_facility_ids: ids.optional(),
   accommodation_type_ids: ids.optional(),
-  room_accessibility_ids: ids.optional(),
-  room_facility_ids: ids.optional(),
 
   // Regular filters.
   max_distance_to_beach: z
@@ -43,15 +40,10 @@ const input = z.object({
   order_by: z
     .enum([
       'distance_to_beach',
-      'number_of_bathrooms',
-      'number_of_bedrooms',
-      'square_meters',
-
       'avg_accuracy_rating',
       'avg_cleanliness_rating',
       'avg_communication_rating',
       'avg_value_rating',
-
       'review_count',
     ])
     .optional(),
@@ -70,16 +62,14 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
     input: {
       // Location.
       country_ids = [],
-      province_ids = [],
-      city_ids = [],
+      // province_ids = [],
+      // city_ids = [],
 
       // Id array filters.
       accommodation_certification_ids = [],
       accommodation_accessibility_ids = [],
       accommodation_facility_ids = [],
       accommodation_type_ids = [],
-      room_accessibility_ids = [],
-      room_facility_ids = [],
 
       // Regular filters.
       keyword,
@@ -90,7 +80,7 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
       direction = 'desc',
       limit = 40,
     },
-    options: { db },
+    ctx: { db },
   }) => {
     let query = db
       .selectFrom('accommodation')
@@ -98,7 +88,6 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
       .innerJoin('city', 'city.id', 'address.city_id')
       .innerJoin('province', 'province.id', 'city.province_id')
       .innerJoin('country', 'country.id', 'province.country_id')
-
       .innerJoin(
         'accommodation_type',
         'accommodation.accommodation_type_id',
@@ -115,9 +104,6 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
         'accommodation.description',
         'accommodation_type.name as accommodation_type',
         'accommodation_type.id as accommodation_type_id',
-        'accommodation.number_of_bathrooms',
-        'accommodation.number_of_bedrooms',
-        'accommodation.square_meters',
 
         // Location.
         'country.name as country',
@@ -155,8 +141,6 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
           'accommodation_accessibilities'
         ),
         withAccommodationFacilities(eb).as('accommodation_facilities'),
-        withRoomAccessibilities(eb).as('room_accessibilities'),
-        withRoomFacilities(eb).as('room_facilities'),
       ])
       .groupBy([
         'accommodation.id',
@@ -232,11 +216,6 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
         );
     }
 
-    //   accommodation_facility_ids = [],
-    //   accommodation_type_ids = [],
-    //   room_accessibility_ids = [],
-    //   room_facility_ids = [],
-
     if (max_distance_to_beach != null) {
       query = query.where(
         'accommodation.distance_to_beach',
@@ -254,8 +233,8 @@ export const accommodationsEndpoint = publicEndpointsFactory.build({
           accommodation_certifications,
           accommodation_accessibilities,
           accommodation_facilities,
-          room_accessibilities,
-          room_facilities,
+          // room_accessibilities,
+          // room_facilities,
 
           avg_communication_rating,
           avg_cleanliness_rating,

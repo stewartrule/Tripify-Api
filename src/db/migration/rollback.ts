@@ -1,3 +1,3 @@
-import { migrateDown } from './migrate';
+import { migrateDown } from './migrate.js';
 
 migrateDown();

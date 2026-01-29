@@ -1,10 +1,10 @@
 import { ez } from 'express-zod-api';
 import { jsonObjectFrom } from 'kysely/helpers/postgres';
 import { z } from 'zod';
-import { publicEndpointsFactory } from '../util/endpointsFactory';
-import { v } from '../util/validator';
+import { publicEndpointsFactory } from '../util/endpointsFactory.js';
+import { v } from '../util/validator.js';
 
-const event = z.record(z.any());
+const event = z.record(z.string(), z.any());
 
 const output = z.object({
   events: event.array(),
@@ -15,8 +15,6 @@ const input = z.object({
   country_ids: v.ids().optional(),
   province_ids: v.ids().optional(),
   city_ids: v.ids().optional(),
-
-  // Sorting.
   direction: z.enum(['asc', 'desc']).optional(),
   order_by: z.enum(['from_date', 'price', 'city']).optional(),
   limit: v.limit(),
@@ -27,13 +25,13 @@ export const eventsEndpoint = publicEndpointsFactory.build({
   output,
   handler: async ({
     input: {
-      date,
+      date = new Date(),
       country_ids = [],
       order_by = 'from_date',
       direction = 'asc',
       limit = 40,
     },
-    options: { db },
+    ctx: { db },
   }) => {
     let query = db
       .selectFrom('event')
@@ -64,7 +62,7 @@ export const eventsEndpoint = publicEndpointsFactory.build({
             .whereRef('image.id', '=', 'event.image_id')
         ).as('image'),
       ])
-      .where('event.from_date', '>=', date || new Date())
+      .where('event.from_date', '>=', date)
       .orderBy(order_by, direction)
       .limit(limit);
 
